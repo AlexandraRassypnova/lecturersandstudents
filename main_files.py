@@ -17,18 +17,20 @@ class Student:
         else:
             return 'Ошибка'
 
-    def get_ave_rate(self):
-        ave_rate = []
-        for grade in self.grades.values():
-            ave_rate += grade
-        return sum(ave_rate) / len(ave_rate)
+    def average_rating(self):
+        # ave_rate = []
+        # for grade in self.grades.values():
+        #     ave_rate += grade
+        # return sum(ave_rate) / len(ave_rate)
+        all_grades = sum(self.grades.values(), [])
+        return sum(all_grades) / len(all_grades) if all_grades else 0.0
 
     def __lt__(self, other):
-        return self.get_ave_rate() < other.get_ave_rate()
+        return self.average_rating() < other.average_rating()
 
     def __str__(self):
-        return (f"Имя: {self.name} \nФамилия:{self.surname} \nСредняя оценка за домашние "
-                f"задания: {self.get_ave_rate()}\nКурсы в процессе обучения: {', '.join(self.courses_in_progress)}\n"
+        return (f"Имя: {self.name} \nФамилия: {self.surname} \nСредняя оценка за домашние "
+                f"задания: {self.average_rating()}\nКурсы в процессе обучения: {', '.join(self.courses_in_progress)}\n"
                 f"Завершенные курсы: {', '.join(self.finished_courses)}")
 
 
@@ -44,18 +46,19 @@ class Lecturer(Mentor):
         super().__init__(name, surname)
         self.grades = {}
 
-    def rate_ave_students(self):
-        ave_rate = []
-        for grade in self.grades.values():
-            ave_rate += grade
-        return sum(ave_rate) / len(ave_rate)
+    def average_rating(self):
+        # ave_rate = []
+        # for grade in self.grades.values():
+        #     ave_rate += grade
+        # return sum(ave_rate) / len(ave_rate)
+        all_grades = sum(self.grades.values(), [])
+        return sum(all_grades) / len(all_grades) if all_grades else 0.0
 
     def __lt__(self, other):
-        return self.rate_ave_students() < other.rate_ave_students()
+        return self.average_rating() < other.average_rating()
 
     def __str__(self):
-        return f'Имя: {self.name} \nФамилия: {self.surname} \nСредняя оценка за лекции: {self.rate_ave_students()}'
-
+        return f'Имя: {self.name} \nФамилия: {self.surname} \nСредняя оценка за лекции: {self.average_rating()}'
 
 class Reviewer(Mentor):
     def __init__(self, name, surname):
@@ -107,27 +110,33 @@ print(f"\nЛектор 1:\n{cool_lecturer}")
 print(f"\nЛектор 2:\n{cool_lecturer_2}")
 print(f"\nСтудент 1:\n{best_student}")
 print(f"\nСтудент 2:\n{best_student_2}")
-print(f"\nСредняя оценка студента 1 {best_student.get_ave_rate()}")
-print(f"Средняя оценка студента 2 {best_student_2.get_ave_rate()}")
+print(f"\nСредняя оценка студента 1 {best_student.average_rating()}")
+print(f"Средняя оценка студента 2 {best_student_2.average_rating()}")
 print(f'У второго студента средняя оценка больше? {best_student<best_student_2}')
-print(f"\nСредняя оценка лектора 1 {cool_lecturer.rate_ave_students()}")
-print(f"Средняя оценка лектора 2 {cool_lecturer_2.rate_ave_students()}")
+print(f"\nСредняя оценка лектора 1 {cool_lecturer.average_rating()}")
+print(f"Средняя оценка лектора 2 {cool_lecturer_2.average_rating()}")
 print(f'У первого лектора средняя оценка больше? {cool_lecturer_2<cool_lecturer}')
 
 students = [best_student, best_student_2]
 course = 'Python'
-def average_rating_student_course(students: list[Student], course):
-    ave = []
-    for m in students:
-        ave.extend(m.grades.get(course, []))
-    return  f'\nСредняя оценка среди студентов по курсу {course} : {sum(ave)/len(ave)}'
+# def average_rating_student_course(students: list[Student], course):
+#     ave = []
+#     for m in students:
+#         ave.extend(m.grades.get(course, []))
+#     return  f'\nСредняя оценка среди студентов по курсу {course} : {sum(ave)/len(ave)}'
+def average_rating_student_course(students, course):
+    grades = [grade for student in students for grade in student.grades.get(course, [])]
+    return f"\nСредняя оценка среди студентов по курсу {course}: {sum(grades)/len(grades):.2f}" if grades else "Нет оценок."
 print(average_rating_student_course(students, course))
 
 lectory = [cool_lecturer, cool_lecturer_2]
 course_l = 'JS'
-def average_rating_lecturers_course(lectory: list[Lecturer], course_l):
-    aver = []
-    for m in lectory:
-        aver.extend(m.grades.get(course_l, []))
-    return  f'\nСредняя оценка среди лекторов по курсу {course_l} : {sum(aver)/len(aver)}'
-print(average_rating_student_course(lectory, course_l))
+# def average_rating_lecturers_course(lectory: list[Lecturer], course_l):
+#     aver = []
+#     for m in lectory:
+#         aver.extend(m.grades.get(course_l, []))
+#     return  f'\nСредняя оценка среди лекторов по курсу {course_l} : {sum(aver)/len(aver)}'
+def average_rating_lecturers_course(lecturers, course):
+    grades = [grade for lecturer in lecturers for grade in lecturer.grades.get(course, [])]
+    return f"\nСредняя оценка среди лекторов по курсу {course}: {sum(grades)/len(grades):.2f}" if grades else "Нет оценок."
+print(average_rating_lecturers_course(lectory, course_l))
